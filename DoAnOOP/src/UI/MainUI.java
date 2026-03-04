@@ -23,6 +23,7 @@ public class MainUI extends javax.swing.JFrame {
      */
     public MainUI() {
         initComponents();
+        tableHistory.setDefaultEditor(Object.class, null); //Không cho chỉnh sửa bảng lịch sử
     }
 
     /**
@@ -239,8 +240,24 @@ public class MainUI extends javax.swing.JFrame {
             String brand = txtBrand.getText();
             String price = txtPrice.getText();
             String qty = txtQty.getText();
+         // Kiểm tra trùng mã SP
+    for (int i = 0; i < model.getRowCount(); i++) {
+        String existingId = model.getValueAt(i, 0).toString();
+        if (existingId.equalsIgnoreCase(id)) {
+            JOptionPane.showMessageDialog(this,
+                    "Mã sản phẩm đã tồn tại!",
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            return; // dừng lại, không thêm nữa
+        }
+    }
+
+    // Nếu không trùng thì mới thêm
 
             model.addRow(new Object[]{id, name, brand, price, qty});
+        
+        JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công!");
+        
             txtId.setText("");
             txtName.setText("");
             txtBrand.setText("");
@@ -263,7 +280,25 @@ public class MainUI extends javax.swing.JFrame {
         }
 
         int currentQty = Integer.parseInt(model.getValueAt(selectedRow, 4).toString());
-        int importQty = Integer.parseInt(txtQty.getText());
+        String qtyText = txtQty.getText().trim();
+
+if (qtyText.isEmpty()) {
+    JOptionPane.showMessageDialog(this, "Vui lòng nhập số lượng!");
+    return;
+}
+
+int importQty;
+
+try {
+    importQty = Integer.parseInt(qtyText);
+    if (importQty <= 0) {
+        JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0!");
+        return;
+    }
+} catch (NumberFormatException e) {
+    JOptionPane.showMessageDialog(this, "Số lượng phải là số!");
+    return;
+}
 
         int newQty = currentQty + importQty;
 
@@ -295,7 +330,25 @@ public class MainUI extends javax.swing.JFrame {
         }
 
         int currentQty = Integer.parseInt(model.getValueAt(selectedRow, 4).toString());
-        int exportQty = Integer.parseInt(txtQty.getText());
+        String qtyText = txtQty.getText().trim();
+
+if (qtyText.isEmpty()) {
+    JOptionPane.showMessageDialog(this, "Vui lòng nhập số lượng!");
+    return;
+}
+
+int exportQty;
+
+try {
+    exportQty = Integer.parseInt(qtyText);
+    if (exportQty <= 0) {
+        JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0!");
+        return;
+    }
+} catch (NumberFormatException e) {
+    JOptionPane.showMessageDialog(this, "Số lượng phải là số!");
+    return;
+}
 
         if (exportQty > currentQty) {
             javax.swing.JOptionPane.showMessageDialog(this, "Không đủ hàng trong kho!");
